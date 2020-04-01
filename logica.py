@@ -14,6 +14,7 @@ class mediadorLogico:
 		self.Mapa = Mapa
 		self.MapaLogico = MapaLogico
 		self.Personajes = Orda.personajes
+		self.PersonajesTotales = Orda.personajes
 		self.Botones = Botones
 		self.ListaMateriales = []
 		self.ListaFabricas = []
@@ -123,7 +124,10 @@ class mediadorLogico:
 			if(i.presionado()):
 					self.Mapa.moverMapa(self.Botones.index(i),self.MapaLogico.ListRect)
 					self.Mapa.imprimirMapa(self.Mapa.screen)
-					time.sleep(0.05)
+					
+					self.organizar()
+
+			
 		
 		
 	def mediarMateriales(self):
@@ -132,6 +136,8 @@ class mediadorLogico:
 		  temp = None
 		  for i in self.Personajes:
 			  if (i.Rectangulo.collidelist(self.MapaLogico.ListRect) != -1):
+				  decorador.decorarEstado(self.Mapa.screen,i)
+				  sleep(0.5)
 				  temp = self.ListaMateriales[i.Rectangulo.collidelist(self.MapaLogico.ListRect)]
 				  if self.MapaLogico.MapaVida [temp.y][temp.x]==1:
 					  self.Madera += temp.perderVida()
@@ -193,11 +199,16 @@ class mediadorLogico:
 	def organizar(self):
 		for i in self.Personajes:
 			for j in self.Personajes:
-				
-				if (i != j and i.posicionInicial == j.posicionInicial):
-						i.posicionInicial = [i.posicionInicial[0]+46,i.posicionInicial[1]]
-						i.setPosicionDestino(i.posicionInicial)
+				#print ( i.posicionInicial == j.posicionInicial)
+				if ( i.posicionInicial == j.posicionInicial):
+						 
+						i.setPosicionDestino([i.posicionInicial[0]+(46*self.Personajes.index(i)),i.posicionInicial[1]])
 						print(i.posicionInicial)
+
+			if i.Rectangulo.collidelist(self.ListaFabricas) !=-1:
+				i.posicionInicial = [i.posicionInicial[0]+46,i.posicionInicial[1]]
+				i.setPosicionDestino(i.posicionInicial)
+
 						
 
 

@@ -116,8 +116,8 @@ class MapaEstandar(IEstrategiaAnimaciones):
 			for i in personaje:
 				i.top += (64)
 
-		for j in personaje:
-			pygame.draw.rect(self.screen,(255,255,255),j)
+		
+		
 			
 		 
 			
@@ -187,7 +187,7 @@ def main():
 	principal_personaje = personaje(3,0,1,2,45,64,2,[posX,posY],'kono.png', 1)
 	mapa1 = MapaEstandar(screen)
 	mapa2 = MapaEventos()
-	a = decorador(screen, principal_personaje, 5, 'polvo.png')
+	
 	Rect = pygame.Rect(0,0,10,10)
 	principal_personaje.getSpawn(mapa1)
 	personajes = []

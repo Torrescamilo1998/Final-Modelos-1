@@ -128,44 +128,20 @@ class Orda:
 
 
 class Mouse:
-	def __init__(self):
-		self.estado = False
-		self.Rectangulo= pygame.Rect(0,0,0,0)
-		self.a=(0,0)
-	
-	def seleccion(self,screen, personajes, orda, limX, limY):
-		
-		
-		if pygame.mouse.get_pressed()[0]==1 and self.estado ==False :
-				self.a = pygame.mouse.get_pos()
-				print (self.a)
-				self.estado=True
-		if pygame.mouse.get_pressed()[0]==0 and self.estado==True and pygame.key.get_pressed()[275] == 1:
-					b=pygame.mouse.get_pos()
-					self.estado = False
-					if (self.a[0]<b[0] and self.a[1]<b[1]):
-						self.Rectangulo = pygame.Rect(self.a[0],self.a[1],(b[0]-self.a[0]),(b[1]-self.a[1]))
-						
-					if 	(self.a[0]>b[0] and self.a[1]<b[1]):
-						self.Rectangulo = pygame.Rect(b[0],self.a[1],(self.a[0]-b[0]),(b[1]-self.a[1]))
-						
-					if 	(self.a[0]<b[0] and self.a[1]>b[1]):
-						self.Rectangulo = pygame.Rect(self.a[0],b[1],(b[0]-self.a[0]),(self.a[1]-b[1]))
-						
-					if 	(self.a[0]>b[0] and self.a[1]>b[1]):
-						self.Rectangulo = pygame.Rect(b[0],b[1],(self.a[0]-b[0]),(self.a[1]-b[1]))
-						
-					self.Rectangulo.left += (limX*46)
-					self.Rectangulo.top += (limY*64) 	
-					
-					for i in personajes:
-                       
-						if self.Rectangulo.contains(i.Rectangulo)==1:
-							print("True")
-							orda.setPersonaje(i)
-							screen.blit(pygame.image.load('media/Imagenes/seleccion.png'),i.posicionInicial)
 
-							
+	
+	def seleccion(screen, personajes, orda):
+		#if 
+		for i in orda:
+			
+
+			 if pygame.mouse.get_pressed()[0]==1 and i.Rectangulo.collidepoint(pygame.mouse.get_pos())==1:
+				 pass
+
+		
+		
+		
+									
 						    							    
 							    
 		
