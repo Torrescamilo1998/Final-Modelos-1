@@ -47,7 +47,9 @@ class MapaEstandar(IEstrategiaAnimaciones):
 			   
 		self.ListaImagenes =  [ 
 		pygame.image.load('media/Obreros.png'), 
-		pygame.image.load('media/Soldados.png') ]  
+		pygame.image.load('media/Soldados.png'),
+		pygame.image.load('media/Casa.png')
+		 ]  
 				   
 		self.screen = screen
 
@@ -154,7 +156,10 @@ class MapaEstandar(IEstrategiaAnimaciones):
 			   if  self.MatrizLogica[i][j] == 3:
 				   screen.blit(self.ListaImagenes[0],(temX*self.anchoImpresion,temY*self.altoImpresion))
 			   if  self.MatrizLogica[i][j] == 4:
-				   screen.blit(self.ListaImagenes[1],(temX*self.anchoImpresion,temY*self.altoImpresion))   
+				   screen.blit(self.ListaImagenes[1],(temX*self.anchoImpresion,temY*self.altoImpresion))
+
+			   if  self.MatrizLogica[i][j] == 5:
+				   screen.blit(self.ListaImagenes[2],(temX*self.anchoImpresion,temY*self.altoImpresion))   
 			      
 			   temX +=1 
 		  temX = 0	 
@@ -175,6 +180,8 @@ class MapaEventos(IEstrategiaAnimaciones):
 
 
 def main():
+
+	
 	Madera = 1000
 	Roca = 1000
 	Comida = 1000
@@ -187,6 +194,7 @@ def main():
 	principal_personaje = personaje(3,0,1,2,45,64,2,[posX,posY],'kono.png', 1)
 	mapa1 = MapaEstandar(screen)
 	mapa2 = MapaEventos()
+	
 	
 	Rect = pygame.Rect(0,0,10,10)
 	principal_personaje.getSpawn(mapa1)

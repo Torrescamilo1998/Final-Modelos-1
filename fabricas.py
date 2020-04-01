@@ -1,6 +1,6 @@
 import pygame,sys
 from time import sleep 
-from logica import *
+#from logica import *
 from personaje import *
 ruta = 'media/Imagenes/Sprites/'
 
@@ -93,6 +93,16 @@ class casaSoldados (casa):
 			#a.setPosicionDestino((a.Rectangulo.left/46,a.Rectangulo.top/64))
 			ListaPersonajes.append(a.Rectangulo)
 			Lista.append(a)
+
+
+class casaNormal(casa):
+	def __init__(self):
+		casa.__init__(self)
+		self.Imagen = pygame.image.load('media/Casa.png')
+		self.Identificacion = 5
+	def crear(self, nivel,ListaPersonajes,Lista):
+		pass
+
 	 
 		
 
@@ -106,16 +116,20 @@ class proxyConstrucion:
 		self.Roca = Roca
 		self.screen = screen
 		self.ListaImagenes = [pygame.image.load('media/Obreros.png')
-		, pygame.image.load('media/Soldados.png')]
+		, pygame.image.load('media/Soldados.png'),
+
+		pygame.image.load('media/Casa.png')
+		]
 	
 	def Construir(self):
 		
-		self.screen = pygame.display.set_mode((300,300), pygame.RESIZABLE)
+		self.screen = pygame.display.set_mode((600,300), pygame.RESIZABLE)
 		FabricaTemporal = None
 		c=True
 		while(c):
 			self.screen.blit(self.ListaImagenes[0],(10,10))
 			self.screen.blit(self.ListaImagenes[1],(155,10))
+			self.screen.blit(self.ListaImagenes[2],(300,10))
 			for evento in pygame.event.get():
 				
 				if evento.type == 12:
@@ -132,6 +146,12 @@ class proxyConstrucion:
 					FabricaTemporal = casaSoldados()
 					if (self.Madera < FabricaTemporal.costeMadera or self.Roca < FabricaTemporal.costeRoca):
 						FabricaTemporal = None
+
+				if presionado(self.screen, [210,10]):
+					c=False	
+					FabricaTemporal = casaNormal()
+					if (self.Madera < FabricaTemporal.costeMadera or self.Roca < FabricaTemporal.costeRoca):
+						FabricaTemporal = None		
 				pygame.display.flip()
 				pygame.display.update()				
 		
@@ -176,4 +196,12 @@ class Visitor:
 	def VisitorCasa (Mapa):
 		Mapa.ListaImagenes[0] = pygame.image.load('media/Obreros2.png')
 		Mapa.ListaImagenes[1] = pygame.image.load('media/Soldados2.png')
-			
+
+	
+	def VisitorCasa2(Mapa):
+		Mapa.ListaImagenes[0] = pygame.image.load('media/Obreros2.png')
+		Mapa.ListaImagenes[1] = pygame.image.load('media/Soldados2.png')
+
+
+
+	

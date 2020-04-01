@@ -10,6 +10,7 @@ from fabricas import *
 		
 class mediadorLogico:
 	def __init__(self, Mapa, MapaLogico, Orda, Botones):
+		self.proxy = None
 		self.index = 0
 		self.Mapa = Mapa
 		self.MapaLogico = MapaLogico
@@ -23,8 +24,8 @@ class mediadorLogico:
 		for i in self.Personajes:
 			self.ListaPersonajesRect.append(i.Rectangulo)
 
-		self.Madera = 1000
-		self.Roca =1000	
+		self.Madera = 10000
+		self.Roca =10000	
 		self.Cursor = Mouse()
 		self.Orda = Orda	
 		self.nivel = 1
@@ -89,6 +90,7 @@ class mediadorLogico:
 			   j.setPosicionDestino(pygame.mouse.get_pos())
 		   elem = j.Impresion
 		   self.Mapa.screen.blit(elem[0],elem[1],(elem[2],elem[3],elem[4],elem[5]))
+		   sleep(0.01)
 		   #pygame.draw.rect(self.Mapa.screen,(255,255,255),j.Rectangulo)
 
 	   #for j in self.MapaLogico.ListRect:
@@ -162,7 +164,11 @@ class mediadorLogico:
 		Obreros = pygame.image.load('media/Obreros.png')
 		Fabrica = None
 		Boton.setBoton()
-		Fabrica = Boton.presionado(self.Madera,self.Roca)
+		self.proxy = Boton.presionado(self.Madera,self.Roca)
+		if self.proxy != None:
+			Fabrica = self.proxy.Construir()
+
+		
 		if Fabrica != None:
 			Fabrica.setRectangulo(getPosicion(pygame.Rect(self.Mapa.posicionImpresion[0]*46,self.Mapa.posicionImpresion[1]*64,135,128),0,self.MapaLogico.ListRect))
 			Fabrica.setRectangulo(getPosicion(pygame.Rect(self.Mapa.posicionImpresion[0]*46,self.Mapa.posicionImpresion[1]*64,135,128),0,self.ListaFabricas))
@@ -170,16 +176,18 @@ class mediadorLogico:
 			
 			self.Mapa.MatrizLogica[int(Fabrica.Rect.top/64)] [int (Fabrica.Rect.left/46)] = Fabrica.Identificacion 
 			self.Mapa.imprimirMapa(self.Mapa.screen)
-			Fabrica.crear(self.nivel,self.ListaPersonajesRect, self.Personajes)
-			self.nivel +=1
-			if self.nivel == 2 :
-				Visitor.VisitorPersonajes(self.Personajes)
-				Visitor.VisitorCasa(self.Mapa)
-			if	self.nivel == 3:
-				Visitor.VisitorPersonajes2(self.Personajes)
+			Fabrica.crear(1,self.ListaPersonajesRect, self.Personajes)
+			self.nivel =len(self.ListaFabricas)
 			self.actualizacion()
+			self.Madera -= Fabrica.costeMadera
+			self.Roca -= Fabrica.costeRoca
 			#self.organizar()
-			self.mediarImpresionPersonajes()	
+			self.mediarImpresionPersonajes()
+			if self.nivel >=1:
+				EstadoRural.Evolucion(self.Mapa, self.Personajes, self.proxy)
+
+			if self.nivel >=3:
+				EstadoAldea.Evolucion(self.Mapa, self.Personajes, self.proxy)
 			
 	def llevarIndex(self):
 		
@@ -266,7 +274,28 @@ def getPosicion(Rectangulo, iteracion,Lista ):
 	
 	return Rectangulo
 
+class Estado:	
 
+		def Evolucion(  MapaGrafico, Personajes, proxy):
+			pass
+		
+class EstadoRural(Estado):
+		
+
+
+		def Evolucion( MapaGrafico, Personajes,proxy):
+			Visitor.VisitorPersonajes(Personajes)
+			Visitor.VisitorCasa(MapaGrafico)
+			Visitor.VisitorCasa(proxy)
+			
+class EstadoAldea(Estado):
+		
+
+
+		def Evolucion(MapaGrafico, Personajes,proxy):
+			Visitor.VisitorPersonajes2(Personajes)
+			Visitor.VisitorCasa2(MapaGrafico)
+			Visitor.VisitorCasa2(proxy) 
 
 
 

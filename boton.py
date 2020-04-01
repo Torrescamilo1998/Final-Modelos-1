@@ -37,11 +37,11 @@ class boton:
   
 class botonConstruir(boton):
 	def presionado(self, Madera, Roca):
-		temp = None
+		proxy = None
 		if pygame.mouse.get_pressed()[0]==1 and self.Rectangulo.collidepoint(pygame.mouse.get_pos())==1:
 			proxy = proxyConstrucion(Madera,Roca, self.screen)
-			temp = proxy.Construir()
-		return temp	
+			#temp = proxy.Construir()
+		return proxy	
 		
 	    		 
 	    		 
