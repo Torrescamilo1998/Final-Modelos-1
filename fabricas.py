@@ -71,8 +71,9 @@ class casaObreros (casa):
 		a=None
 		for i in range (0,2):
 			a = F.getObrero(nivel)
-			a.Rectangulo = pygame.Rect(self.posicion[0],self.posicion[1]+128,20,20)
-			a.setPosicionDestino((a.Rectangulo.left/46,a.Rectangulo.top/64))
+			a.Rectangulo = pygame.Rect(self.posicion[0],self.posicion[1]+128,30,64)
+			a.posicionInicial = [a.Rectangulo.left/46,a.Rectangulo.top/64]
+			a.posicionDestino = [a.Rectangulo.left/46,a.Rectangulo.top/64]
 			ListaPersonajes.append(a.Rectangulo)
 			Lista.append(a)
 		
@@ -89,7 +90,7 @@ class casaSoldados (casa):
 		for i in range (0,3):
 			a = F.getSoldado(nivel)
 			a.Rectangulo = pygame.Rect(self.posicion[0],self.posicion[1]+128,20,20)
-			a.setPosicionDestino((a.Rectangulo.left/46,a.Rectangulo.top/64))
+			#a.setPosicionDestino((a.Rectangulo.left/46,a.Rectangulo.top/64))
 			ListaPersonajes.append(a.Rectangulo)
 			Lista.append(a)
 	 

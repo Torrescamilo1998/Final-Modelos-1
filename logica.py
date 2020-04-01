@@ -18,17 +18,30 @@ class mediadorLogico:
 		self.ListaMateriales = []
 		self.ListaFabricas = []
 		self.ListaPersonajesRect = []
+		self.c = True
 		for i in self.Personajes:
 			self.ListaPersonajesRect.append(i.Rectangulo)
-			
+
+		self.Madera = 1000
+		self.Roca =1000	
 		self.Cursor = Mouse()
 		self.Orda = Orda	
 		self.nivel = 1
+		self.hilos = []
+		self.hilos.append(threading.Thread(target=self.mediarMateriales))
+		for j in self.Personajes:
+			self.hilos.append(threading.Thread(target=j.movimiento,args=(self.MapaLogico,)))
+		
 
 		
-	def actualizacion():
-		Mapa.MatrizLogica =	Mapa.MatrizLogica2
-		 
+	def actualizacion(self):
+		self.hilos = []
+		self.hilos.append(threading.Thread(target=self.mediarMateriales))
+		for i in self.Personajes:
+			self.hilos.append(threading.Thread(target=i.movimiento,args=(self.MapaLogico,)))
+		for j  in self.hilos:
+		   j.start()
+
 	def generarMateriales(self):
 		for j in range (0,1500):
 		  for i in range (1,3):
@@ -69,23 +82,26 @@ class mediadorLogico:
 	def mediarImpresionPersonajes(self):
 	   self.Mapa.imprimirMapa(self.Mapa.screen)
 	   
-	   i = self.Personajes[self.index]
+
+	   for j in self.Personajes:
+		   if pygame.mouse.get_pressed()[0]==1 and pygame.mouse.get_pos()[0] < 820:
+			   j.setPosicionDestino(pygame.mouse.get_pos())
+		   elem = j.Impresion
+		   self.Mapa.screen.blit(elem[0],elem[1],(elem[2],elem[3],elem[4],elem[5]))
+		   #pygame.draw.rect(self.Mapa.screen,(255,255,255),j.Rectangulo)
+
+	   #for j in self.MapaLogico.ListRect:
+		#   pygame.draw.rect(self.Mapa.screen,(255,255,255),j)
+		   
+
+	   
+
+	"""   
+	  i = self.Personajes[self.index]
 		   
 	   elem = i.movimiento(self.MapaLogico)
 	   self.Mapa.screen.blit(elem[0],elem[1],(elem[2],elem[3],elem[4],elem[5]))
-		   
-		   
-	   if pygame.mouse.get_pressed()[0]==1 and pygame.mouse.get_pos()[0] < 820:
-			   i.setPosicionDestino(pygame.mouse.get_pos())
-			
-			   if i.Rectangulo.collidelist(self.MapaLogico.ListRect) != -1:
-				   i.setPosicionDestino(i.posicionInicial)
-				   
-				   
-	   for j in self.Personajes:
-		   elem = j.Impresion
-		   self.Mapa.screen.blit(elem[0],elem[1],(elem[2],elem[3],elem[4],elem[5]))
-		   		   
+		"""      		   
 	   			   
 	
 	def mediarEstado(self):
@@ -105,55 +121,48 @@ class mediadorLogico:
 		for i in self.Botones:
 			i.setBoton()
 			if(i.presionado()):
-				for j in self.Personajes:
-					self.Mapa.moverMapa(self.Botones.index(i),j)
+					self.Mapa.moverMapa(self.Botones.index(i),self.MapaLogico.ListRect)
 					self.Mapa.imprimirMapa(self.Mapa.screen)
 					time.sleep(0.05)
 		
 		
-	def mediarMaterialesMadera(self, Madera):
-		temp = None
-		for i in self.Personajes:
-			
-			if (i.Rectangulo.collidelist(self.MapaLogico.ListRect) != -1):
-				temp = self.ListaMateriales[i.Rectangulo.collidelist(self.MapaLogico.ListRect)]
-				if self.MapaLogico.MapaVida [temp.y][temp.x]==1:
-					Madera += temp.perderVida()
+	def mediarMateriales(self):
+		while (self.c):
+
+		  temp = None
+		  for i in self.Personajes:
+			  if (i.Rectangulo.collidelist(self.MapaLogico.ListRect) != -1):
+				  temp = self.ListaMateriales[i.Rectangulo.collidelist(self.MapaLogico.ListRect)]
+				  if self.MapaLogico.MapaVida [temp.y][temp.x]==1:
+					  self.Madera += temp.perderVida()
+
+				  if self.MapaLogico.MapaVida [temp.y][temp.x]==2:
+					  self.Roca += temp.perderVida()
+
+				  if temp.vida <=0:
+					   self.MapaLogico.ListRect.remove(temp.Rectangulo)
+					   self.MapaLogico.MapaVida [temp.y][temp.x]=0
+					   self.Mapa.MatrizLogica [temp.y][temp.x] = 0
+					   self.ListaMateriales.remove(temp) 
+							
+
 					
-					
-				
-					
-		return Madera
-			
-	def mediarMaterialesRoca(self,Roca):
-		temp = None
-		for i in self.Personajes:
-			if (i.Rectangulo.collidelist(self.MapaLogico.ListRect) != -1):
-				temp = self.ListaMateriales[i.Rectangulo.collidelist(self.MapaLogico.ListRect)]
-				if self.MapaLogico.MapaVida [temp.y][temp.x]==2:
-					Roca += temp.perderVida() 
-					
-		for i in self.ListaMateriales:
-			if i.vida <=0:
-				self.MapaLogico.ListRect.remove(i.Rectangulo)
-				self.MapaLogico.MapaVida [i.y][i.x]=0
-				self.Mapa.MatrizLogica [i.y][i.x]=0
-				self.ListaMateriales.remove(i)
+		  
 					
 				
-					
-		return Roca		
+						
 					
 	def mediarConstruccion(self, Madera, Roca, Boton):
 		Obreros = pygame.image.load('media/Obreros.png')
 		Fabrica = None
 		Boton.setBoton()
-		Fabrica = Boton.presionado(Madera,Roca)
+		Fabrica = Boton.presionado(self.Madera,self.Roca)
 		if Fabrica != None:
 			Fabrica.setRectangulo(getPosicion(pygame.Rect(self.Mapa.posicionImpresion[0]*46,self.Mapa.posicionImpresion[1]*64,135,128),0,self.MapaLogico.ListRect))
-			#self.MapaLogico.ListRect.append(Fabrica.Rect)
+			Fabrica.setRectangulo(getPosicion(pygame.Rect(self.Mapa.posicionImpresion[0]*46,self.Mapa.posicionImpresion[1]*64,135,128),0,self.ListaFabricas))
+			self.ListaFabricas.append(Fabrica.Rect)
+			
 			self.Mapa.MatrizLogica[int(Fabrica.Rect.top/64)] [int (Fabrica.Rect.left/46)] = Fabrica.Identificacion 
-			self.ListaFabricas.append([Obreros,Fabrica.Rect.left,Fabrica.Rect.top])
 			self.Mapa.imprimirMapa(self.Mapa.screen)
 			Fabrica.crear(self.nivel,self.ListaPersonajesRect, self.Personajes)
 			self.nivel +=1
@@ -162,6 +171,9 @@ class mediadorLogico:
 				Visitor.VisitorCasa(self.Mapa)
 			if	self.nivel == 3:
 				Visitor.VisitorPersonajes2(self.Personajes)
+			self.actualizacion()
+			#self.organizar()
+			self.mediarImpresionPersonajes()	
 			
 	def llevarIndex(self):
 		
@@ -170,8 +182,27 @@ class mediadorLogico:
 				if 49 <= pygame.key.get_pressed().index(i) <=57 and len(self.Personajes) >= pygame.key.get_pressed().index(i)-48:
 					self.index = pygame.key.get_pressed().index(i)-49
 					
+	def limpiar(self):
+		for i in self.ListaMateriales:
+			  if i.vida <=0:
+				  self.MapaLogico.ListRect.remove(i.Rectangulo)
+				  self.MapaLogico.MapaVida [i.y][i.x]=0
+				  self.Mapa.MatrizLogica [i.y][i.x]=0
+				  self.ListaMateriales.remove(i)
+
+	def organizar(self):
+		for i in self.Personajes:
+			for j in self.Personajes:
 				
-			
+				if (i != j and i.posicionInicial == j.posicionInicial):
+						i.posicionInicial = [i.posicionInicial[0]+46,i.posicionInicial[1]]
+						i.setPosicionDestino(i.posicionInicial)
+						print(i.posicionInicial)
+						
+
+
+
+
 		
 		
 			    
@@ -223,4 +254,8 @@ def getPosicion(Rectangulo, iteracion,Lista ):
 		
 	
 	return Rectangulo
+
+
+
+
 

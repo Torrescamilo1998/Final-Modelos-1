@@ -91,21 +91,35 @@ class MapaEstandar(IEstrategiaAnimaciones):
 	def moverMapa(self, caso, personaje):
 		if caso== 0 and self.posicionImpresion[0]+1<482:
 			self.posicionImpresion[0] += 1
-			personaje.limX +=46
+			for i in personaje:
+				i.left -= (46)
+			
+			
 			
 			
 		if caso== 1 and self.posicionImpresion[0]-1>0:
-			self.posicionImpresion[0] -= 1	
-			personaje.limX -=46
+			self.posicionImpresion[0] -= 1
+			for i in personaje:
+				i.left += (46)
+				
+			
 			
 				
 		if caso== 2 and self.posicionImpresion[1]+1<480:
-			self.posicionImpresion[1] += 1		
-			personaje.limY += 64
+			self.posicionImpresion[1] += 1
+			for i in personaje:
+				i.top -= (64)		
+			
 			
 		if caso== 3 and self.posicionImpresion[1]-1>0:
 			self.posicionImpresion[1] -= 1
-			personaje.limY -= 64
+			for i in personaje:
+				i.top += (64)
+
+		for j in personaje:
+			pygame.draw.rect(self.screen,(255,255,255),j)
+			
+		 
 			
 	
 	
@@ -193,24 +207,23 @@ def main():
 	mediator.generarMateriales()	
 	mediator.crearLogicaRestrictiva()
 	fuente1=pygame.font.Font(None,40)
-	fabrica= None
 		
-	
+	mediator.actualizacion()
 	while(True):
 		tiempoEjecucion =round( time.time() - inicio)
 		mediator.mediarImpresionPersonajes()
 		mediator.mediarEstado()
 		mediator.mediarBotones()
-
-
-		Madera = mediator.mediarMaterialesMadera(Madera)
-		Roca = mediator.mediarMaterialesRoca(Roca)
   
 
 		for evento in pygame.event.get():
 			
 			
 			if evento.type == 12:
+
+				for i in mediator.Personajes:
+					i.c=False
+				mediator.c=False
 				sys.exit(0)
 				
 		
@@ -221,11 +234,10 @@ def main():
 		screen.fill((0,0,0))	
 		screen.blit(pygame.image.load('media/Imagenes/madera.png'),(835,0))
 		screen.blit(pygame.image.load('media/Imagenes/metal.png'),(835,55))
-		screen.blit(fuente1.render("x"+ str(Madera),0,(255,255,255)) ,(885,0))
-		screen.blit(fuente1.render("x"+ str(Roca) ,0,(255,255,255)) ,(885, 55))
+		screen.blit(fuente1.render("x"+ str(mediator.Madera),0,(255,255,255)) ,(885,0))
+		screen.blit(fuente1.render("x"+ str(mediator.Roca) ,0,(255,255,255)) ,(885, 55))
 		mediator.mediarConstruccion(Madera,Roca,btn)
 		
-		mediator.llevarIndex()
 		
 	return 0 
 
